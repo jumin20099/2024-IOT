@@ -3,20 +3,23 @@ import HelloWorld from "./HelloWorld.vue";
 import { ref } from "vue";
 import axios from "axios";
 import { onMounted } from "vue"
+import NodeDetail from './NodeDetail.vue';
 
-let count = ref(0);
+
 let nodeList = ref([
-    { mac_address: "48:3F:DA:0C:B2:FU", name: "node-heoshin" },
-    { mac_address: "14:ED:C9:75:54:CK", name: null },
+  { mac_address: "48:3F:DA:0C:B2:FU", name: "node-heoshin" },
+  { mac_address: "14:ED:C9:75:54:CK", name: null },
 ]);
+
+let currentNodeId = ref("");
 
 const getNodeList = () =>{
   axios.get('http://pcs.pah.kr:82/hardware').then(response => {
-      console.log(response.default);
-      nodeList.value = response.data;
-    }).catch(err => {
-      console.error('노드 목록 조회 실패', err);
-    })
+    console.log(response.default);
+    nodeList.value = response.data;
+  }).catch(err => {
+    console.error('노드 목록 조회 실패', err);
+  })
 }
 
 getNodeList();
@@ -27,8 +30,10 @@ getNodeList();
   <p>노드 개수 : {{ nodeList.length }}</p>
 
   <div v-for="(item, idx) in nodeList">
-    <button>{{ nodeList[idx]["mac_address"] }}</button>
+    <button @click="currentNodeId = nodeList[idx]">{{ nodeList[idx]["mac_address"] }}</button>
   </div>
+  
+  <NodeDetail :currentNodeId = "currentNodeId"/>
 </template>
 
 <style scoped>
@@ -46,4 +51,10 @@ getNodeList();
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
 }
+
+button{
+  margin-top: 10px;
+}
+
+
 </style>
